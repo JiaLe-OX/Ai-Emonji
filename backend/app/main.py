@@ -7,7 +7,7 @@ from .predictor import predict_image
 from .schemas import PredictionResponse
 
 app = FastAPI(title="AI Emonjj API", version="0.1.0")
-allowed_origins = [item.strip() for item in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if item.strip()]
+allowed_origins = [item.strip() for item in os.getenv("ALLOWED_ORIGINS", "https://emonji.jialeox.cn,http://localhost:5173,http://127.0.0.1:5173").split(",") if item.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
