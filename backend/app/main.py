@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from .predictor import predict_image
+from .predictor import model_status, predict_image
 from .schemas import PredictionResponse
 
 app = FastAPI(title="AI Emonjj API", version="0.1.0")
@@ -25,6 +25,11 @@ def root() -> dict[str, str]:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/model-status")
+def model_status_route() -> dict[str, object]:
+    return model_status()
 
 
 @app.post("/predict", response_model=PredictionResponse)

@@ -129,6 +129,18 @@ def _yolo_predict(data: bytes) -> PredictionResponse | None:
     )
 
 
+def model_status() -> dict[str, object]:
+    yolo_path = os.getenv("YOLO_FACE_MODEL") or DEFAULT_YOLO_MODEL
+    emotion_path = os.getenv("EMOTION_MODEL") or DEFAULT_EMOTION_MODEL
+    return {
+        "ultralytics_imported": YOLO is not None,
+        "yolo_model_path": yolo_path,
+        "yolo_model_exists": os.path.exists(yolo_path),
+        "emotion_model_path": emotion_path,
+        "emotion_model_exists": os.path.exists(emotion_path),
+    }
+
+
 def predict_image(data: bytes) -> PredictionResponse:
     if len(data) > MAX_BYTES:
         raise ValueError("IMAGE_TOO_LARGE")
@@ -168,5 +180,5 @@ def predict_image(data: bytes) -> PredictionResponse:
     return PredictionResponse(
         image=ImageInfo(width=width, height=height),
         faces=[face],
-        warnings=["当前使用演示预测器；接入 YOLOv8-face/SCRFD 后可返回真实多人脸结果。"],
+        warnings=[f"当前使用演示预测器：{model_status()}"],
     )
