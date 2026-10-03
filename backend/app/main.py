@@ -17,6 +17,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    return {"name": "AI Emonjj API", "status": "ok", "health": "/health", "predict": "/predict"}
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
