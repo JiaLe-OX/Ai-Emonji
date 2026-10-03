@@ -22,7 +22,7 @@ except Exception as exc:  # Keep API available and expose the actual runtime iss
 SUPPORTED_FORMATS = {"JPEG", "PNG", "WEBP"}
 MAX_BYTES = 10 * 1024 * 1024
 MAX_FACES = int(__import__("os").getenv("MAX_FACES", "100"))
-DEFAULT_YOLO_MODEL = "/app/weights/yolov9e-face-lindevs.pt"
+DEFAULT_YOLO_MODEL = "/app/weights/yolov8n-face-lindevs.pt"
 DEFAULT_EMOTION_MODEL = "/app/weights/model_q4.onnx"
 # emotion-ferplus-8.onnx follows the official FERPlus output order.
 EMOTION_LABELS = ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]

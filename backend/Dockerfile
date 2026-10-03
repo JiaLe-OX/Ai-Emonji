@@ -18,13 +18,13 @@ COPY app ./app
 
 RUN mkdir -p /app/weights \
     && curl -L --fail --retry 3 \
-       -o /app/weights/yolov9e-face-lindevs.pt \
-       "https://huggingface.co/JiaLe-OX/ai-emonjj-models/resolve/main/yolov9e-face-lindevs.pt" \
+       -o /app/weights/yolov8n-face-lindevs.pt \
+       "https://huggingface.co/JiaLe-OX/ai-emonjj-models/resolve/main/yolov8n-face-lindevs.pt" \
     && curl -L --fail --retry 3 \
        -o /app/weights/model_q4.onnx \
        "https://huggingface.co/JiaLe-OX/ai-emonjj-models/resolve/main/model_q4.onnx"
 
-ENV YOLO_FACE_MODEL=/app/weights/yolov9e-face-lindevs.pt
+ENV YOLO_FACE_MODEL=/app/weights/yolov8n-face-lindevs.pt
 ENV EMOTION_MODEL=/app/weights/model_q4.onnx
 ENV EMOTION_PREPROCESS=imagenet
 
