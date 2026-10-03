@@ -13,8 +13,10 @@ except ImportError:
 
 try:
     from ultralytics import YOLO
-except ImportError:  # Optional until real weights are configured.
+    YOLO_IMPORT_ERROR = ""
+except Exception as exc:  # Keep API available and expose the actual runtime issue.
     YOLO = None
+    YOLO_IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
 
 
 SUPPORTED_FORMATS = {"JPEG", "PNG", "WEBP"}
@@ -134,6 +136,7 @@ def model_status() -> dict[str, object]:
     emotion_path = os.getenv("EMOTION_MODEL") or DEFAULT_EMOTION_MODEL
     return {
         "ultralytics_imported": YOLO is not None,
+        "ultralytics_import_error": YOLO_IMPORT_ERROR,
         "yolo_model_path": yolo_path,
         "yolo_model_exists": os.path.exists(yolo_path),
         "emotion_model_path": emotion_path,
