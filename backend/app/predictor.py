@@ -20,6 +20,8 @@ except ImportError:  # Optional until real weights are configured.
 SUPPORTED_FORMATS = {"JPEG", "PNG", "WEBP"}
 MAX_BYTES = 10 * 1024 * 1024
 MAX_FACES = int(__import__("os").getenv("MAX_FACES", "100"))
+DEFAULT_YOLO_MODEL = "/app/weights/yolov9e-face-lindevs.pt"
+DEFAULT_EMOTION_MODEL = "/app/weights/model_q4.onnx"
 # emotion-ferplus-8.onnx follows the official FERPlus output order.
 EMOTION_LABELS = ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
 EMOTION_THRESHOLD = float(os.getenv("EMOTION_THRESHOLD", "0.45"))
@@ -65,8 +67,8 @@ _emotion_classifier: EmotionClassifier | None = None
 
 def _get_emotion_classifier() -> EmotionClassifier | None:
     global _emotion_classifier
-    model_path = os.getenv("EMOTION_MODEL")
-    if not model_path or not os.path.exists(model_path):
+    model_path = os.getenv("EMOTION_MODEL") or DEFAULT_EMOTION_MODEL
+    if not os.path.exists(model_path):
         return None
     if _emotion_classifier is None:
         _emotion_classifier = EmotionClassifier(model_path)
@@ -75,10 +77,13 @@ def _get_emotion_classifier() -> EmotionClassifier | None:
 
 def _yolo_predict(data: bytes) -> PredictionResponse | None:
     """Use YOLOv8-face when YOLO_FACE_MODEL points to a local .pt file."""
-    model_path = os.getenv("YOLO_FACE_MODEL")
-    if not model_path or YOLO is None:
+    model_path = os.getenv("YOLO_FACE_MODEL") or DEFAULT_YOLO_MODEL
+    if YOLO is None or not os.path.exists(model_path):
         return None
-    image = Image.open(BytesIO(data)).convert("RGB")
+    try:
+        image = Image.open(BytesIO(data)).convert("RGB")
+    except Exception:
+        return None
     result = YOLO(model_path)(image, verbose=False)[0]
     classifier = _get_emotion_classifier()
     faces: list[FacePrediction] = []
