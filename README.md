@@ -34,9 +34,9 @@ npm run dev
 
 ## 模型与权重
 
-当前本地配置使用 YOLOv9e-face 和 Xenova 表情 ONNX 模型。权重文件不提交到 GitHub（GitHub 单文件限制和仓库体积限制），请放入 `backend/weights/`：
+当前本地配置使用 YOLOv8n-face 和 Xenova 表情 ONNX 模型。权重文件不提交到 GitHub（GitHub 单文件限制和仓库体积限制），请放入 `backend/weights/`：
 
-- `yolov9e-face-lindevs.pt`
+- `yolov8n-face-lindevs.pt`
 - `model_q4.onnx`
 
 启动前设置环境变量：
@@ -46,7 +46,7 @@ cd backend
 pip install -r requirements.txt
 New-Item -ItemType Directory -Force weights
 # 将兼容 Ultralytics 的 YOLOv8-face .pt 权重放入 backend/weights/
-$env:YOLO_FACE_MODEL = "./weights/yolov9e-face-lindevs.pt"
+$env:YOLO_FACE_MODEL = "./weights/yolov8n-face-lindevs.pt"
 $env:EMOTION_MODEL = "./weights/model_q4.onnx"
 $env:EMOTION_PREPROCESS = "imagenet"
 uvicorn app.main:app --reload --port 8000
@@ -57,7 +57,7 @@ uvicorn app.main:app --reload --port 8000
 ## 开源项目与模型来源
 
 - [EmojiFace](https://github.com/Steve-Mr/EmojiFace)：参考人脸检测后叠加 emoji 的产品思路和 Canvas 编辑流程；没有直接复制其前端代码或素材。
-- [yolov8-face](https://github.com/derronqi/yolov8-face)：参考 YOLO 人脸检测模型的使用方式。当前权重使用 YOLOv9e-face 兼容权重。
+- [yolov8-face](https://github.com/derronqi/yolov8-face)：参考 YOLO 人脸检测模型的使用方式。当前权重使用 YOLOv8n-face 兼容权重。
 - [Xenova/facial_emotions_image_detection](https://huggingface.co/Xenova/facial_emotions_image_detection)：使用其 ONNX 表情分类模型 `model_q4.onnx`，请按模型仓库许可证和使用条款保留来源说明。
 
 项目内置 emoji 使用浏览器原生 Unicode emoji，不包含第三方 SVG 贴纸包。

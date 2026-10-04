@@ -7,12 +7,12 @@
 
 ## 1. 产品目标
 
-AI Emonjj 是一个轻量、低门槛的群像图片表情贴纸工具。它优先使用固定 emonjj 素材保证速度和稳定性，同时为后续接入 AI 生成 emonjj 保留接口。
+AI Emonjj 是一个轻量、低门槛的人物图片表情贴纸工具。它优先使用固定 emonjj 素材保证速度和稳定性，同时为后续接入 AI 生成 emonjj 保留接口。
 
 首版必须完成以下闭环：
 
 1. 打开博客子域名即可使用，无需登录。
-2. 上传一张群像图片并显示预览。
+2. 上传一张人物图片并显示预览。
 3. 检测图片中的多张人脸。
 4. 为每张人脸估计一个基础表情类别。
 5. 一键为所有人脸匹配并添加 emonjj。
@@ -49,11 +49,11 @@ AI Emonjj 是一个轻量、低门槛的群像图片表情贴纸工具。它优�
 ```text
 进入 emoji 子域名
   ↓
-上传或拖入群像图片
+上传或拖入人物图片
   ↓
 显示原图预览与处理提示
   ↓
-调用 Hugging Face Spaces 推理接口
+调用阿里云 ECS FastAPI 推理接口
   ↓
 返回人脸框、关键点、表情类别和置信度
   ↓
@@ -77,7 +77,7 @@ AI Emonjj 是一个轻量、低门槛的群像图片表情贴纸工具。它优�
 页面组成：
 
 - 顶部品牌名：`AI Emonjj`。
-- 一句说明：`给群像图片里的每个人加上合适的 emonjj`。
+- 一句说明：`给人物图片里的每个人加上合适的 emonjj`。
 - 主上传区域：支持点击选择和拖拽上传。
 - 示例图片入口：使用项目内置的低分辨率示例图，不上传到第三方。
 - 隐私提示：`图片只用于本次处理，任务结束后自动清理`。
@@ -187,10 +187,10 @@ GitHub Pages
       ├── emonjj 素材
       └── 导出图片
 
-Hugging Face Spaces
-  └── 免费推理服务
-      ├── 人脸检测
-      ├── 表情裁剪与分类
+阿里云 ECS（api.jialeox.cn）
+  └── Nginx + Docker + FastAPI
+      ├── YOLOv8n-face 人脸检测
+      ├── model_q4.onnx 表情分类
       └── 返回 JSON 结果
 ```
 
@@ -199,14 +199,14 @@ Hugging Face Spaces
 - Vite + React + TypeScript。
 - Canvas 2D 或 Konva.js 负责图层编辑。
 - 原图和贴纸均使用前端内存对象，不写入永久存储。
-- 通过 HTTPS 调用 Hugging Face Spaces API。
+- 通过 HTTPS 调用 `https://api.jialeox.cn`。
 
 后端建议：
 
-- Hugging Face Spaces + Gradio 或 FastAPI。
+- 阿里云 ECS + Docker + FastAPI，Nginx 负责反向代理和 HTTPS。
 - Python 3.11。
-- 人脸检测模型：YOLOv8-face；如果群像小脸效果不足，替换为 SCRFD。
-- 表情模型：轻量 MobileNet/ResNet 表情分类模型或 DeepFace 的表情模块。
+- 人脸检测模型：YOLOv8n-face。
+- 表情模型：Xenova `model_q4.onnx`，通过 ONNX Runtime 在 CPU 上推理。
 - 返回人脸框、关键点、表情类别、置信度。
 
 ## 7. API 约定
@@ -274,7 +274,7 @@ type EmojiLayer = {
 免费定位必须明确以下限制：
 
 - GitHub Pages 只托管静态页面，不运行 Python 或 YOLO。
-- Hugging Face Spaces 免费实例可能休眠，首次请求会慢。
+- 阿里云 ECS 低配实例的 CPU 和内存有限，首次加载模型会慢。
 - 免费 CPU 推理不适合高并发和大批量处理。
 - 不保证任何模型对所有图片都准确。
 - AI 生成 emonjj 只能作为后续实验能力，不作为 MVP 的核心承诺。
@@ -294,8 +294,8 @@ type EmojiLayer = {
 - 首版无需账号。
 - 前端不保存历史作品。
 - 不保存原始图片和推理结果到数据库。
-- Hugging Face 服务只在处理期间接收图片，并在任务结束后释放临时文件。
-- 页面明确说明图片会发送到 Hugging Face Spaces 进行处理。
+- ECS API 只在处理期间接收图片，服务端不保存原图和推理结果。
+- 页面明确说明图片会发送到 `api.jialeox.cn` 进行处理。
 - 禁止上传违法、侵权或不适合公开处理的图片。
 - API 端限制文件类型、文件大小和请求频率。
 - 不在日志中记录原图、Base64 内容或人脸图片。
@@ -311,22 +311,22 @@ type EmojiLayer = {
 5. 配置自定义域名，例如 `emoji.example.com`。
 6. 在 DNS 中为子域名添加 GitHub Pages 要求的 CNAME 记录。
 
-### Hugging Face Spaces
+### 阿里云 ECS 后端
 
-1. 创建公开或受限的 Space。
-2. 选择 Gradio 或 Docker SDK。
-3. 安装模型和推理依赖。
-4. 提供 `/predict` 接口。
-5. 配置 CORS，只允许 AI Emonjj 子域名调用。
-6. 使用一张多人脸测试图验证坐标、关键点和表情 JSON。
-7. 将 Space API 地址写入前端环境变量。
+1. 创建 Ubuntu 22.04 ECS 实例并开放 22、80、443 端口。
+2. 安装 Docker、Nginx 和 Certbot。
+3. 将项目后端上传到 `/opt/Ai-Emonji/backend`，把模型放入 `weights/`。
+4. 构建并运行 `ai-emonjj-api` 容器，映射 `127.0.0.1:8000 -> 7860`。
+5. 配置 Nginx 将 `api.jialeox.cn` 反向代理到 `127.0.0.1:8000`。
+6. 使用 Certbot 为 API 子域名配置 HTTPS。
+7. 在前端生产环境变量中设置 `VITE_API_URL=https://api.jialeox.cn`。
 
 ## 12. 验收标准
 
 - 用户无需登录即可上传图片。
 - JPG、PNG、WebP 能正常预览。
 - 上传错误会显示明确原因。
-- 正常群像图可以返回多个人脸结果。
+- 正常人物图片可以返回多个人脸结果。
 - 每个人脸都有稳定唯一 ID。
 - 表情置信度低时会提示用户确认。
 - 一键添加后，所有可识别人脸都有对应 emonjj。
@@ -375,8 +375,9 @@ type EmojiLayer = {
 | 决策 | 结论 | 原因 |
 |---|---|---|
 | 前端托管 | GitHub Pages | 已有博客基础设施且免费 |
-| 模型托管 | Hugging Face Spaces | 可免费部署开源模型，适合 MVP |
+| 后端托管 | 阿里云 ECS | Docker 运行真实模型，性能稳定 |
 | 核心素材 | 固定 emonjj 优先 | 速度快、效果稳定、可手动修正 |
 | AI 生成 | 后续可插拔 | 免费资源无法保证稳定的生成式推理 |
 | 图片保存 | 不永久保存 | 降低隐私、存储和合规成本 |
 | 表情结果 | 作为推荐 | 模型存在误判，必须允许用户覆盖 |
+

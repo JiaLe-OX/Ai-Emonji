@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a local MVP with separate `frontend/` and `backend/` folders for uploading a group image, detecting faces through a FastAPI-compatible inference endpoint, applying emonjj layers, editing one layer, and exporting PNG.
+**Goal:** Build a local MVP with separate `frontend/` and `backend/` folders for uploading a person image, detecting faces through a FastAPI-compatible inference endpoint, applying emonjj layers, editing one layer, and exporting PNG.
 
-**Architecture:** The React frontend owns upload state, Canvas composition, emonjj assets, and export. The Python backend exposes `POST /predict` with a deterministic demo detector until model weights are configured, while keeping the response contract ready for Hugging Face Spaces. Deployment is intentionally excluded.
+**Architecture:** The React frontend owns upload state, Canvas composition, emonjj assets, and export. The Python backend exposes `POST /predict` with YOLOv8n-face and ONNX emotion inference, plus a demo fallback when weights are unavailable. Production deployment uses Alibaba Cloud ECS with Docker and Nginx.
 
 **Tech Stack:** React, TypeScript, Vite, Canvas 2D, FastAPI, Python 3.11, Pillow, pytest.
 
@@ -17,7 +17,7 @@
 - 表情结果显示为模型推测，并允许用户覆盖。
 - 不保存历史图片或任务。
 - 前端与后端必须位于独立文件夹。
-- 本轮不生成部署配置，不接入付费 API。
+- 生产部署使用阿里云 ECS、Docker、Nginx 和 HTTPS。
 
 ---
 
@@ -36,7 +36,7 @@
 
 - [ ] **Step 1: Write validation tests** for accepted formats, oversized images, and stable demo response shape.
 - [ ] **Step 2: Run `pytest -q`** and confirm the tests fail because backend modules do not exist.
-- [ ] **Step 3: Implement FastAPI route, image validation, and a deterministic demo predictor.** Keep the predictor isolated so YOLOv8-face/SCRFD can replace it later.
+- [ ] **Step 3: Implement FastAPI route, image validation, and the YOLOv8n-face predictor with a demo fallback.** Keep the predictor isolated so YOLOv8-face/SCRFD can replace it later.
 - [ ] **Step 4: Run `pytest -q`** and confirm all backend tests pass.
 
 ### Task 2: Frontend editor
@@ -75,5 +75,5 @@
 - Documents: local startup commands, API URL configuration, and future model replacement boundary.
 
 - [ ] **Step 1: Document separate frontend/backend startup.**
-- [ ] **Step 2: Document that the current predictor is a local demo adapter and where to connect YOLOv8-face/SCRFD.**
+- [ ] **Step 2: Document YOLOv8n-face, ONNX emotion inference, local startup, and Alibaba ECS deployment.**
 - [ ] **Step 3: Verify all referenced paths and commands exist.**
