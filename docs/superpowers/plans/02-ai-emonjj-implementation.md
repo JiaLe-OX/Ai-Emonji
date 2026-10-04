@@ -1,14 +1,14 @@
-# 02. AI Emonjj Implementation Plan
+# 02. AI Emonji Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a local MVP with separate `frontend/` and `backend/` folders for uploading a person image, detecting faces through a FastAPI-compatible inference endpoint, applying emonjj layers, editing one layer, and exporting PNG.
+**Goal:** Build a local MVP with separate `frontend/` and `backend/` folders for uploading a person image, detecting faces through a FastAPI-compatible inference endpoint, applying emonji layers, editing one layer, and exporting PNG.
 
-**Architecture:** The React frontend owns upload state, Canvas composition, emonjj assets, and export. The Python backend exposes `POST /predict` with YOLOv8n-face and ONNX emotion inference, plus a demo fallback when weights are unavailable. Production deployment uses Alibaba Cloud ECS with Docker and Nginx.
+**Architecture:** The React frontend owns upload state, Canvas composition, emonji assets, and export. The Python backend exposes `POST /predict` with YOLOv8n-face and ONNX emotion inference, plus a demo fallback when weights are unavailable. Production deployment uses Alibaba Cloud ECS with Docker and Nginx.
 
 **Tech Stack:** React, TypeScript, Vite, Canvas 2D, FastAPI, Python 3.11, Pillow, pytest.
 
-**Spec:** `docs/superpowers/specs/01-ai-emonjj-product-design.md`
+**Spec:** `docs/superpowers/specs/01-ai-emonji-product-design.md`
 
 ## Global Constraints
 
@@ -51,13 +51,13 @@
 - Create: `frontend/src/types.ts`
 - Create: `frontend/src/assets.ts`
 - Create: `frontend/src/styles.css`
-- Create: `frontend/public/emonjj/*.svg`
+- Create: `frontend/public/emonji/*.svg`
 
 **Interfaces:**
 - Consumes: `PredictionResponse` from `/predict`.
 - Produces: editable `EmojiLayer[]` and downloadable PNG.
 
-- [ ] **Step 1: Add the Vite React TypeScript shell and local emonjj SVG assets.**
+- [ ] **Step 1: Add the Vite React TypeScript shell and local emonji SVG assets.**
 - [ ] **Step 2: Implement upload validation, preview canvas, and backend request state.**
 - [ ] **Step 3: Implement one-click mapping from emotions to assets and Canvas rendering.**
 - [ ] **Step 4: Implement selected-face editing: asset replacement, scale, rotation, offsets, hide, and reset.**

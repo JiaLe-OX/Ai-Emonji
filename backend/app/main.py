@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .predictor import model_status, predict_image
 from .schemas import PredictionResponse
 
-app = FastAPI(title="AI Emonjj API", version="0.1.0")
+app = FastAPI(title="AI Emonji API", version="0.1.0")
 allowed_origins = [item.strip() for item in os.getenv("ALLOWED_ORIGINS", "https://emonji.jialeox.cn,http://localhost:5173,http://127.0.0.1:5173").split(",") if item.strip()]
 app.add_middleware(
     CORSMiddleware,
@@ -19,7 +19,7 @@ app.add_middleware(
 
 @app.get("/")
 def root() -> dict[str, str]:
-    return {"name": "AI Emonjj API", "status": "ok", "health": "/health", "predict": "/predict"}
+    return {"name": "AI Emonji API", "status": "ok", "health": "/health", "predict": "/predict"}
 
 
 @app.get("/health")
